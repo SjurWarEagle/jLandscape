@@ -1,6 +1,7 @@
 package de.tkunkel.landscape.generator;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class BorderInfo {
     public static int cntAttachmentPoints = 5;
@@ -9,6 +10,13 @@ public class BorderInfo {
     public Color[] south = new Color[cntAttachmentPoints];
     public Color[] west = new Color[cntAttachmentPoints];
 
-    public BorderInfo(){
+    @Override
+    public String toString() {
+        return "BorderInfo{" +
+                "north=" + Arrays.toString(north) +
+                ", east=" + Arrays.toString(east) +
+                ", south=" + Arrays.toString(south) +
+                ", west=" + Arrays.toString(west) +
+                '}';
     }
 }

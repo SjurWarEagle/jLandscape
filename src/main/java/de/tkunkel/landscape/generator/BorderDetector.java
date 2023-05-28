@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.net.URL;
 
 public class BorderDetector {
-    public BorderInfo detectBorder(String filename) throws IOException {
-        URL resource = getClass().getClassLoader().getResource(filename);
+
+    public BorderInfo detectBorder(String fileName) throws IOException {
+        URL resource = getClass().getClassLoader().getResource(fileName);
         if (resource == null) {
-            throw new IllegalArgumentException("file '" + filename + "' not found!");
+            throw new IllegalArgumentException("file '" + fileName + "' not found!");
         }
         BufferedImage bufferedImage = ImageIO.read(resource);
         int width = bufferedImage.getWidth();
