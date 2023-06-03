@@ -13,7 +13,7 @@ import java.net.URL;
 
 
 public class MapRenderer {
-    int cellSize = 25;
+    private final int cellSize = 25;
 
     public void render(Map map) throws IOException {
         int width = map.width * cellSize;
@@ -27,8 +27,9 @@ public class MapRenderer {
         g2d.fillRect(0, 0, width, height);
 
         for (int x = 0; x < map.grid.length; x++) {
-            for (int y = 0; y < map.grid.length; y++) {
-                BufferedImage tileImage = readImage(map.grid[x][y].fileName);
+            for (int y = 0; y < map.grid[x].length; y++) {
+                String fileName = map.grid[x][y].candidates.get(0).fileName;
+                BufferedImage tileImage = readImage(fileName);
 
                 // we assume, that the tiles and the target are square
                 double scaleFactor = (double) cellSize / tileImage.getWidth();
@@ -38,6 +39,7 @@ public class MapRenderer {
 
         try {
             File output = new File("output/tmp.png");
+            new File("output").mkdir();
             ImageIO.write(image, "png", output);
         } catch (IOException e) {
             System.err.println("Error saving image: " + e.getMessage());
@@ -52,8 +54,7 @@ public class MapRenderer {
         int h2 = (int) (h * scale);
         BufferedImage after = new BufferedImage(w2, h2, BufferedImage.TYPE_INT_ARGB);
         AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
-        AffineTransformOp scaleOp
-                = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
+        AffineTransformOp scaleOp = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
 
         scaleOp.filter(before, after);
         return after;
@@ -64,8 +65,7 @@ public class MapRenderer {
         if (resource == null) {
             throw new IllegalArgumentException("file '" + fileName + "' not found!");
         }
-        BufferedImage bufferedImage = ImageIO.read(resource);
 
-        return bufferedImage;
+        return ImageIO.read(resource);
     }
 }
