@@ -1,16 +1,46 @@
 package de.tkunkel.landscape.generator;
 
+import de.tkunkel.landscape.map.Map;
 import de.tkunkel.landscape.map.MapTileCandidate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 class TileComparatorTest {
+
+    @Test
+    public void updatePotentialCandidates_normal() throws NoTileCandidatesLeft, URISyntaxException, IOException {
+        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("demo", 2, 2);
+        Map map = landscapeGenerator.createEmptyMap();
+        landscapeGenerator.updatePotentialCandidates(map);
+        Assertions.assertEquals(2, map.grid.length);
+        Assertions.assertEquals(2, map.grid[0].length);
+        Assertions.assertEquals(2, map.grid[1].length);
+        Assertions.assertEquals(5, map.grid[0][0].candidates.size());
+        Assertions.assertEquals(5, map.grid[0][1].candidates.size());
+        Assertions.assertEquals(5, map.grid[1][0].candidates.size());
+        Assertions.assertEquals(5, map.grid[1][1].candidates.size());
+
+        MapTileCandidate keeper = map.grid[0][0].candidates.stream().toList().get(0);
+        map.grid[0][0].candidates.clear();
+        map.grid[0][0].candidates.add(loadMapTile("demo/blank.png"));
+
+        landscapeGenerator.updatePotentialCandidates(map);
+        Assertions.assertEquals(2, map.grid.length);
+        Assertions.assertEquals(2, map.grid[0].length);
+        Assertions.assertEquals(2, map.grid[1].length);
+        Assertions.assertEquals(1, map.grid[0][0].candidates.size());
+        Assertions.assertEquals(2, map.grid[0][1].candidates.size());
+        Assertions.assertEquals(2, map.grid[1][0].candidates.size());
+        Assertions.assertEquals(5, map.grid[1][1].candidates.size());
+
+    }
 
     @Test
     public void isPossibleNeighbour_normal() {
@@ -64,24 +94,12 @@ class TileComparatorTest {
     }
 
     @Test
-    public void aaaaaaa() throws IOException {
-        BorderDetector borderDetector = new BorderDetector();
-
-        MapTileCandidate mapTileCandidateNorth = new MapTileCandidate();
-        mapTileCandidateNorth.borderInfo = borderDetector.detectBorder("demo/up.png");
-        mapTileCandidateNorth.fileName = "demo/up.png";
-
-        MapTileCandidate mapTileCandidateEast = new MapTileCandidate();
-        mapTileCandidateEast.borderInfo = borderDetector.detectBorder("demo/right.png");
-        mapTileCandidateEast.fileName = "demo/right.png";
-
-        MapTileCandidate mapTileCandidateSouth = new MapTileCandidate();
-        mapTileCandidateSouth.borderInfo = borderDetector.detectBorder("demo/down.png");
-        mapTileCandidateSouth.fileName = "demo/down.png";
-
-        MapTileCandidate mapTileCandidateWest = new MapTileCandidate();
-        mapTileCandidateWest.borderInfo = borderDetector.detectBorder("demo/left.png");
-        mapTileCandidateWest.fileName = "demo/left.png";
+    public void check_realImage_alignment() throws IOException {
+        MapTileCandidate mapTileCandidateBlank = loadMapTile("demo/blank.png");
+        MapTileCandidate mapTileCandidateNorth = loadMapTile("demo/up.png");
+        MapTileCandidate mapTileCandidateEast = loadMapTile("demo/right.png");
+        MapTileCandidate mapTileCandidateSouth = loadMapTile("demo/down.png");
+        MapTileCandidate mapTileCandidateWest = loadMapTile("demo/left.png");
 
         TileComparator tileComparator = new TileComparator();
         boolean possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateNorth, mapTileCandidateSouth,
@@ -103,10 +121,26 @@ class TileComparatorTest {
         possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateNorth, mapTileCandidateWest,
                 Direction.EAST);
         Assertions.assertTrue(possibleNeighbour);
+
+        possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateBlank, mapTileCandidateEast,
+                Direction.EAST);
+        Assertions.assertTrue(possibleNeighbour);
 ///////////////
         possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateNorth, mapTileCandidateEast,
                 Direction.EAST);
         Assertions.assertFalse(possibleNeighbour);
+
+        possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateBlank, mapTileCandidateWest,
+                Direction.EAST);
+        Assertions.assertFalse(possibleNeighbour);
+    }
+
+    private static MapTileCandidate loadMapTile(String fileName) throws IOException {
+        BorderDetector borderDetector = new BorderDetector();
+        MapTileCandidate mapTileCandidateNorth = new MapTileCandidate();
+        mapTileCandidateNorth.borderInfo = borderDetector.detectBorder(fileName);
+        mapTileCandidateNorth.fileName = fileName;
+        return mapTileCandidateNorth;
     }
 
     @Test

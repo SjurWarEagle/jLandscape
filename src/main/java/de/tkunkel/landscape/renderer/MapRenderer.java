@@ -28,7 +28,7 @@ public class MapRenderer {
 
         for (int x = 0; x < map.grid.length; x++) {
             for (int y = 0; y < map.grid[x].length; y++) {
-                String fileName = map.grid[x][y].candidates.get(0).fileName;
+                String fileName = map.grid[x][y].candidates.stream().toList().get(0).fileName;
                 BufferedImage tileImage = readImage(fileName);
 
                 // we assume, that the tiles and the target are square

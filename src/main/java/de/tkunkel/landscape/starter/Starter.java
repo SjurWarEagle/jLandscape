@@ -9,34 +9,41 @@ import java.util.Objects;
 
 public class Starter {
     public static void main(String[] args) throws Exception {
-        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("demo");
-        Map testMap = null;
+        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("circuit", 20, 20);
+//        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("demo", 10, 10);
+        Map map = null;
 
         boolean problemOccured = false;
         int loop = 0;
         System.out.println("Lets start");
         do {
             loop++;
+            problemOccured = false;
             try {
-                testMap = landscapeGenerator.createEmptyMap();
-            } catch (NoTileCandidatesLeft e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                problemOccured = false;
-                landscapeGenerator.collapseAll(testMap);
-                checkIfBrokenFields(testMap);
+                map = landscapeGenerator.createEmptyMap();
             } catch (NoTileCandidatesLeft ex) {
                 problemOccured = true;
                 System.out.println("Looping (" + loop + ")");
                 System.out.println(ex.getMessage());
             }
-            if (loop > 1000) {
+            if (!problemOccured) {
+                try {
+                    problemOccured = false;
+                    landscapeGenerator.collapseAll(map);
+                    checkIfBrokenFields(map);
+                } catch (NoTileCandidatesLeft ex) {
+                    problemOccured = true;
+                    System.out.println("Looping (" + loop + ")");
+                    System.out.println(ex.getMessage());
+                }
+            }
+            if (loop > 1_000) {
                 throw new RuntimeException("Too many tries to fill the map!");
             }
         } while (problemOccured);
+
         MapRenderer mapRenderer = new MapRenderer();
-        mapRenderer.render(testMap);
+        mapRenderer.render(map);
     }
 
     private static void checkIfBrokenFields(Map testMap) throws NoTileCandidatesLeft {

@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class BorderInfo {
-    public static final int cntAttachmentPoints = 3;
+    public static final int cntAttachmentPoints = 5;
     public Color[] north = new Color[cntAttachmentPoints];
     public Color[] east = new Color[cntAttachmentPoints];
     public Color[] south = new Color[cntAttachmentPoints];

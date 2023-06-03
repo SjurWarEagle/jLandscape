@@ -13,21 +13,26 @@ import java.util.*;
 public class LandscapeGenerator {
 
     private final String tileSet;
+    private final int width;
+    private final int height;
     private final BorderDetector borderDetector = new BorderDetector();
     private final ArrayList<MapTileCandidate> allPossibleMapTileCandidates = new ArrayList<>();
 
-    public LandscapeGenerator(String tileSet) {
+    public LandscapeGenerator(String tileSet,int width, int height) {
         this.tileSet = tileSet;
+        this.width = width;
+        this.height = height;
     }
 
     public Map createEmptyMap() throws URISyntaxException, IOException, NoTileCandidatesLeft {
-        ArrayList<MapTileCandidate> mapTileCandidates = collectAllPossibleTiles(this.tileSet);
+        Set<MapTileCandidate> mapTileCandidates = collectAllPossibleTiles(this.tileSet);
 
-        Map map = new Map(3, 1);
+        Map map = new Map(this.width, this.height);
         for (int x = 0; x < map.grid.length; x++) {
             for (int y = 0; y < map.grid[x].length; y++) {
                 map.grid[x][y] = new MapTile();
-                map.grid[x][y].candidates = new ArrayList<>(mapTileCandidates);
+                map.grid[x][y].candidates.clear();
+                map.grid[x][y].candidates.addAll(mapTileCandidates);
             }
         }
         updatePotentialCandidates(map);
@@ -35,9 +40,9 @@ public class LandscapeGenerator {
         return map;
     }
 
-    private ArrayList<MapTileCandidate> collectAllPossibleTiles(String tileSet) throws URISyntaxException, IOException {
+    private Set<MapTileCandidate> collectAllPossibleTiles(String tileSet) throws URISyntaxException, IOException {
         if (this.allPossibleMapTileCandidates.size() > 0) {
-            return new ArrayList<>(this.allPossibleMapTileCandidates);
+            return new HashSet<>(this.allPossibleMapTileCandidates);
         }
 
         URL resource = getClass().getClassLoader().getResource(tileSet);
@@ -45,7 +50,7 @@ public class LandscapeGenerator {
             throw new IllegalArgumentException("folder '" + tileSet + "' not found!");
         }
 
-        ArrayList<MapTileCandidate> allCandidates = new ArrayList<>();
+        Set<MapTileCandidate> allCandidates = new HashSet<>();
 
         File folder = new File(resource.toURI());
         File[] files = folder.listFiles();
@@ -65,7 +70,9 @@ public class LandscapeGenerator {
     }
 
     public MapTile findNextTileToCollapse(Map map) {
-        Optional<MapTile> next = Arrays.stream(map.grid).flatMap(Arrays::stream).filter(mapTile -> mapTile.candidates.size() > 1).min(Comparator.comparingInt(o -> o.candidates.size()));
+        Optional<MapTile> next = Arrays.stream(map.grid).flatMap(Arrays::stream)
+                .filter(mapTile -> mapTile.candidates.size() > 1)
+                .min(Comparator.comparingInt(o -> o.candidates.size()));
 
         return next.orElse(null);
     }
@@ -86,58 +93,64 @@ public class LandscapeGenerator {
         }
     }
 
-    private void updatePotentialCandidates(Map map) throws URISyntaxException, IOException, NoTileCandidatesLeft {
+    public void updatePotentialCandidates(Map map) throws URISyntaxException, IOException, NoTileCandidatesLeft {
         TileComparator tileComparator = new TileComparator();
-        ArrayList<MapTileCandidate> allPossibleMapTileCandidates = collectAllPossibleTiles(this.tileSet);
         for (int x = 0; x < map.grid.length; x++) {
             for (int y = 0; y < map.grid[x].length; y++) {
-                if (map.grid[x][y].candidates.size() <= 1) {
-                    // already collapsed, no update of options needed
-                    continue;
-                }
-                List<MapTileCandidate> neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.NORTH);
-                removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.NORTH);
-
-                neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.EAST);
-                removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.EAST);
-
-                neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.SOUTH);
-                removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.SOUTH);
-
-                neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.WEST);
-                removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.WEST);
-
-                map.grid[x][y].candidates = allPossibleMapTileCandidates;
-                if (allPossibleMapTileCandidates.size() == 0) {
-                    throw new NoTileCandidatesLeft("filling: " + x + "/" + y);
-                }
+                updateCell(map, tileComparator, x, y);
             }
         }
     }
 
+    private void updateCell(Map map, TileComparator tileComparator, int x, int y) throws URISyntaxException, IOException, NoTileCandidatesLeft {
+        Set<MapTileCandidate> allPossibleMapTileCandidates = collectAllPossibleTiles(this.tileSet);
+        if (map.grid[x][y].candidates.size() <= 1) {
+            // already collapsed, no update of options needed
+            return;
+        }
+        List<MapTileCandidate> neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.NORTH);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.NORTH);
 
-    private void removeNotAllowedCandidates(List<MapTileCandidate> sourceCandidates, List<MapTileCandidate> neighbours, Direction direction) {
+        neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.EAST);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.EAST);
+
+        neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.SOUTH);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.SOUTH);
+
+        neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.WEST);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.WEST);
+
+        map.grid[x][y].candidates.clear();
+        map.grid[x][y].candidates.addAll(allPossibleMapTileCandidates);
+        if (allPossibleMapTileCandidates.size() == 0) {
+            throw new NoTileCandidatesLeft("filling: " + x + "/" + y);
+        }
+    }
+
+
+    private void removeNotAllowedCandidates(Set<MapTileCandidate> sourceCandidates, List<MapTileCandidate> neighbours, Direction direction) {
         if (Objects.isNull(neighbours)) {
             return;
         }
-        List<MapTileCandidate> toRemove = new ArrayList<>();
+        Set<MapTileCandidate> toKeep = new HashSet<>();
         TileComparator tileComparator = new TileComparator();
 
         for (MapTileCandidate sourceCandidate : sourceCandidates) {
             for (MapTileCandidate neighbour : neighbours) {
-                if (!tileComparator.isPossibleNeighbour(sourceCandidate, neighbour, direction)) {
-                    toRemove.add(sourceCandidate);
+                if (tileComparator.isPossibleNeighbour(sourceCandidate, neighbour, direction)) {
+                    toKeep.add(sourceCandidate);
                 }
             }
         }
-        sourceCandidates.removeAll(toRemove);
+        sourceCandidates.clear();
+        sourceCandidates.addAll(toKeep);
     }
 
     private void collapseSingle(MapTile nextTileToCollapse) {
         long rounded = new Random().nextLong(nextTileToCollapse.candidates.size());
-        MapTileCandidate selectedCandidate = nextTileToCollapse.candidates.get((int) rounded);
+        MapTileCandidate selectedCandidate = nextTileToCollapse.candidates.stream().toList().get((int) rounded);
 
-        nextTileToCollapse.candidates=new ArrayList<>();
+        nextTileToCollapse.candidates.clear();
         nextTileToCollapse.candidates.add(selectedCandidate);
     }
 }

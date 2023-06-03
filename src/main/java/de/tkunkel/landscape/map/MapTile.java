@@ -2,11 +2,11 @@ package de.tkunkel.landscape.map;
 
 import de.tkunkel.landscape.generator.BorderInfo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MapTile {
-    public List<MapTileCandidate> candidates=new ArrayList<>();
+    public Set<MapTileCandidate> candidates=new HashSet<>();
     public BorderInfo borderInfo;
 
     @Override
