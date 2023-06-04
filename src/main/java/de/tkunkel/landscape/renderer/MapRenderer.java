@@ -26,7 +26,7 @@ public class MapRenderer {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
 
-        // Set background color
+        // Set background color, to check if something was not rendered
         g2d.setColor(Color.BLUE);
         g2d.fillRect(0, 0, width, height);
 
