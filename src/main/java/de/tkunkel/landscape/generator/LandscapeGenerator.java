@@ -3,6 +3,9 @@ package de.tkunkel.landscape.generator;
 import de.tkunkel.landscape.map.Map;
 import de.tkunkel.landscape.map.MapTile;
 import de.tkunkel.landscape.map.MapTileCandidate;
+import de.tkunkel.landscape.types.Direction;
+import de.tkunkel.landscape.types.NoTileCandidatesLeft;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,15 +13,21 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+@Service
 public class LandscapeGenerator {
 
-    private final String tileSet;
-    private final int width;
-    private final int height;
-    private final BorderDetector borderDetector = new BorderDetector();
+    private BorderDetector borderDetector;
+
+    private String tileSet;
+    private int width;
+    private int height;
     private final ArrayList<MapTileCandidate> allPossibleMapTileCandidates = new ArrayList<>();
 
-    public LandscapeGenerator(String tileSet,int width, int height) {
+    public LandscapeGenerator(BorderDetector borderDetector) {
+        this.borderDetector = borderDetector;
+    }
+
+    public void setConfigParameter(String tileSet, int width, int height) {
         this.tileSet = tileSet;
         this.width = width;
         this.height = height;
@@ -102,23 +111,24 @@ public class LandscapeGenerator {
         }
     }
 
-    private void updateCell(Map map, TileComparator tileComparator, int x, int y) throws URISyntaxException, IOException, NoTileCandidatesLeft {
+    public void updateCell(Map map, TileComparator tileComparator, int x, int y) throws URISyntaxException, IOException, NoTileCandidatesLeft {
         Set<MapTileCandidate> allPossibleMapTileCandidates = collectAllPossibleTiles(this.tileSet);
         if (map.grid[x][y].candidates.size() <= 1) {
             // already collapsed, no update of options needed
             return;
         }
-        List<MapTileCandidate> neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.NORTH);
-        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.NORTH);
 
-        neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.EAST);
-        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.EAST);
+        List<MapTileCandidate> possibleMapTilesWithNeighbour = tileComparator.getPossibleMapTilesWithNeighbour(map, x, y, Direction.NORTH);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, possibleMapTilesWithNeighbour, Direction.NORTH);
 
-        neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.SOUTH);
-        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.SOUTH);
+        possibleMapTilesWithNeighbour = tileComparator.getPossibleMapTilesWithNeighbour(map, x, y, Direction.EAST);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, possibleMapTilesWithNeighbour, Direction.EAST);
 
-        neighbours = tileComparator.getNeighbourInDirection(map, x, y, Direction.WEST);
-        removeNotAllowedCandidates(allPossibleMapTileCandidates, neighbours, Direction.WEST);
+        possibleMapTilesWithNeighbour = tileComparator.getPossibleMapTilesWithNeighbour(map, x, y, Direction.SOUTH);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, possibleMapTilesWithNeighbour, Direction.SOUTH);
+
+        possibleMapTilesWithNeighbour = tileComparator.getPossibleMapTilesWithNeighbour(map, x, y, Direction.WEST);
+        removeNotAllowedCandidates(allPossibleMapTileCandidates, possibleMapTilesWithNeighbour, Direction.WEST);
 
         map.grid[x][y].candidates.clear();
         map.grid[x][y].candidates.addAll(allPossibleMapTileCandidates);

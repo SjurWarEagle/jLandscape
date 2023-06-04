@@ -1,6 +1,9 @@
 package de.tkunkel.landscape.renderer;
 
 import de.tkunkel.landscape.map.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,9 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-
+@Service
 public class MapRenderer {
     private final int cellSize = 25;
+    Logger LOG = LoggerFactory.getLogger(MapRenderer.class);
 
     public void render(Map map) throws IOException {
         int width = map.width * cellSize;
@@ -42,7 +46,7 @@ public class MapRenderer {
             new File("output").mkdir();
             ImageIO.write(image, "png", output);
         } catch (IOException e) {
-            System.err.println("Error saving image: " + e.getMessage());
+            LOG.error("Error saving image: " + e.getMessage());
         }
     }
 

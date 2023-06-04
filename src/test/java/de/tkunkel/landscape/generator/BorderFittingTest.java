@@ -1,6 +1,7 @@
 package de.tkunkel.landscape.generator;
 
 import de.tkunkel.landscape.map.MapTileCandidate;
+import de.tkunkel.landscape.types.Direction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +43,11 @@ class BorderFittingTest {
         Assertions.assertFalse(possibleNeighbour);
         possibleNeighbour = tileComparator.isPossibleNeighbour(circuit0, circuit4, Direction.EAST);
         Assertions.assertTrue(possibleNeighbour);
+
+        possibleNeighbour = tileComparator.isPossibleNeighbour(circuit3, circuit2, Direction.EAST);
+        Assertions.assertFalse(possibleNeighbour);
+        possibleNeighbour = tileComparator.isPossibleNeighbour(circuit2, circuit3, Direction.WEST);
+        Assertions.assertFalse(possibleNeighbour);
 
         possibleNeighbour = tileComparator.isPossibleNeighbour(circuit12, circuit1, Direction.SOUTH);
         Assertions.assertTrue(possibleNeighbour);

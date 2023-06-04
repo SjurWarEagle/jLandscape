@@ -1,6 +1,6 @@
 package de.tkunkel.landscape.map;
 
-import de.tkunkel.landscape.generator.BorderInfo;
+import de.tkunkel.landscape.types.BorderInfo;
 
 public class MapTileCandidate {
     public String fileName;

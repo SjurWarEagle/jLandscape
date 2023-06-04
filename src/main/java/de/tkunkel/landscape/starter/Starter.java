@@ -1,21 +1,46 @@
 package de.tkunkel.landscape.starter;
 
 import de.tkunkel.landscape.generator.LandscapeGenerator;
-import de.tkunkel.landscape.generator.NoTileCandidatesLeft;
+import de.tkunkel.landscape.types.NoTileCandidatesLeft;
 import de.tkunkel.landscape.map.Map;
 import de.tkunkel.landscape.renderer.MapRenderer;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Objects;
 
+@SpringBootApplication(scanBasePackages = "de.tkunkel.landscape")
 public class Starter {
-    public static void main(String[] args) throws Exception {
-        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("circuit", 20, 20);
-//        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("demo", 10, 10);
+    static Logger LOG = LoggerFactory.getLogger(Starter.class);
+
+    private LandscapeGenerator landscapeGenerator;
+    private         MapRenderer mapRenderer;
+
+
+    public Starter(LandscapeGenerator landscapeGenerator, MapRenderer mapRenderer) {
+        this.landscapeGenerator = landscapeGenerator;
+        this.mapRenderer = mapRenderer;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Starter.class, args);
+    }
+
+    @PostConstruct
+    private void start() throws Exception {
+        generateLandscape();
+    }
+
+    public void generateLandscape() throws Exception {
+        landscapeGenerator.setConfigParameter("circuit", 20, 20);
         Map map = null;
 
-        boolean problemOccured = false;
+        boolean problemOccured;
         int loop = 0;
-        System.out.println("Lets start");
+        LOG.info("Lets start");
         do {
             loop++;
             problemOccured = false;
@@ -23,18 +48,17 @@ public class Starter {
                 map = landscapeGenerator.createEmptyMap();
             } catch (NoTileCandidatesLeft ex) {
                 problemOccured = true;
-                System.out.println("Looping (" + loop + ")");
-                System.out.println(ex.getMessage());
+                LOG.info("Looping (" + loop + ")");
+                LOG.debug(ex.getMessage());
             }
             if (!problemOccured) {
                 try {
-                    problemOccured = false;
                     landscapeGenerator.collapseAll(map);
                     checkIfBrokenFields(map);
                 } catch (NoTileCandidatesLeft ex) {
                     problemOccured = true;
-                    System.out.println("Looping (" + loop + ")");
-                    System.out.println(ex.getMessage());
+                    LOG.info("Looping (" + loop + ")");
+                    LOG.debug(ex.getMessage());
                 }
             }
             if (loop > 1_000) {
@@ -42,7 +66,6 @@ public class Starter {
             }
         } while (problemOccured);
 
-        MapRenderer mapRenderer = new MapRenderer();
         mapRenderer.render(map);
     }
 

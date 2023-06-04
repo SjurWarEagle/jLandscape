@@ -1,5 +1,10 @@
 package de.tkunkel.landscape.generator;
 
+import de.tkunkel.landscape.types.BorderInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -7,14 +12,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
+@Service
 public class BorderDetector {
+    Logger LOG = LoggerFactory.getLogger(BorderDetector.class);
+
     HashMap<String, BorderInfo> cache = new HashMap<>();
 
     public BorderInfo detectBorder(String fileName) throws IOException {
         if (cache.containsKey(fileName)) {
             return cache.get(fileName);
         }
-        System.out.println("detectBorder " + fileName);
+        LOG.info("detectBorder " + fileName);
         URL resource = getClass().getClassLoader().getResource(fileName);
         if (resource == null) {
             throw new IllegalArgumentException("file '" + fileName + "' not found!");

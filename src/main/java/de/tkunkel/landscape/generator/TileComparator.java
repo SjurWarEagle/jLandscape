@@ -3,14 +3,17 @@ package de.tkunkel.landscape.generator;
 import de.tkunkel.landscape.map.Map;
 import de.tkunkel.landscape.map.MapTile;
 import de.tkunkel.landscape.map.MapTileCandidate;
+import de.tkunkel.landscape.types.Direction;
+import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+@Service
 public class TileComparator {
 
-    public List<MapTileCandidate> getNeighbourInDirection(Map map, int x, int y, Direction direction) {
+    public List<MapTileCandidate> getPossibleMapTilesWithNeighbour(Map map, int x, int y, Direction direction) {
         switch (direction) {
 
             case NORTH -> {
@@ -120,6 +123,7 @@ public class TileComparator {
         if (Math.abs(color1.getGreen()- color2.getGreen())>factor) {
             return false;
         }
+        //noinspection RedundantIfStatement
         if (Math.abs(color1.getBlue()- color2.getBlue())>factor) {
             return false;
         }

@@ -2,6 +2,9 @@ package de.tkunkel.landscape.generator;
 
 import de.tkunkel.landscape.map.Map;
 import de.tkunkel.landscape.map.MapTileCandidate;
+import de.tkunkel.landscape.types.BorderInfo;
+import de.tkunkel.landscape.types.Direction;
+import de.tkunkel.landscape.types.NoTileCandidatesLeft;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,9 +17,37 @@ import java.util.List;
 
 class TileComparatorTest {
 
+//    @Test
+//    public void updatePotentialCandidates_normal_circuit() throws NoTileCandidatesLeft, URISyntaxException, IOException {
+//        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("circuit", 5, 5);
+//        Map map = landscapeGenerator.createEmptyMap();
+//        landscapeGenerator.updatePotentialCandidates(map);
+//        Assertions.assertEquals(5, map.grid.length);
+//
+//        Assertions.assertEquals(5, map.grid[0].length);
+//        Assertions.assertEquals(5, map.grid[1].length);
+//        Assertions.assertEquals(5, map.grid[2].length);
+//        Assertions.assertEquals(5, map.grid[3].length);
+//        Assertions.assertEquals(5, map.grid[4].length);
+//
+//        Assertions.assertEquals(13, map.grid[0][0].candidates.size());
+//        Assertions.assertEquals(13, map.grid[0][1].candidates.size());
+//        //tile 5 cannot be o
+//        Assertions.assertEquals(12, map.grid[1][0].candidates.size());
+//        Assertions.assertEquals(13, map.grid[1][1].candidates.size());
+//
+//        landscapeGenerator.updatePotentialCandidates(map);
+//
+//        Assertions.assertEquals(13, map.grid[0][0].candidates.size());
+//        Assertions.assertEquals(13, map.grid[0][1].candidates.size());
+//        Assertions.assertEquals(13, map.grid[1][0].candidates.size());
+//        Assertions.assertEquals(13, map.grid[1][1].candidates.size());
+//    }
+
     @Test
-    public void updatePotentialCandidates_normal() throws NoTileCandidatesLeft, URISyntaxException, IOException {
-        LandscapeGenerator landscapeGenerator = new LandscapeGenerator("demo", 2, 2);
+    public void updatePotentialCandidates_normal_demo() throws NoTileCandidatesLeft, URISyntaxException, IOException {
+        LandscapeGenerator landscapeGenerator = new LandscapeGenerator(new BorderDetector());
+        landscapeGenerator.setConfigParameter("demo", 2, 2);
         Map map = landscapeGenerator.createEmptyMap();
         landscapeGenerator.updatePotentialCandidates(map);
         Assertions.assertEquals(2, map.grid.length);
@@ -37,7 +68,7 @@ class TileComparatorTest {
         Assertions.assertEquals(2, map.grid[1].length);
         Assertions.assertEquals(1, map.grid[0][0].candidates.size());
         Assertions.assertEquals(2, map.grid[0][1].candidates.size());
-        Assertions.assertEquals(2, map.grid[1][0].candidates.size());
+        Assertions.assertEquals(5, map.grid[1][0].candidates.size());
         Assertions.assertEquals(5, map.grid[1][1].candidates.size());
 
     }
@@ -125,6 +156,7 @@ class TileComparatorTest {
         possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateBlank, mapTileCandidateEast,
                 Direction.EAST);
         Assertions.assertTrue(possibleNeighbour);
+
 ///////////////
         possibleNeighbour = tileComparator.isPossibleNeighbour(mapTileCandidateNorth, mapTileCandidateEast,
                 Direction.EAST);

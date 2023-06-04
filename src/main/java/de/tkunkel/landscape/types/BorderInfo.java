@@ -1,4 +1,4 @@
-package de.tkunkel.landscape.generator;
+package de.tkunkel.landscape.types;
 
 import java.awt.*;
 import java.util.Arrays;
