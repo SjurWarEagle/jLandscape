@@ -7,8 +7,8 @@ import de.tkunkel.landscape.types.Direction;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Service
 public class TileComparator {
@@ -52,7 +52,7 @@ public class TileComparator {
         return new ArrayList<>(mapTile.candidates);
     }
 
-    public Collection<MapTileCandidate> getPossibleNeighbours(MapTileCandidate meTile, List<MapTileCandidate> neighbour, List<MapTileCandidate> allTiles, Direction direction) {
+    public Collection<MapTileCandidate> getPossibleNeighbours(MapTileCandidate meTile, List<MapTileCandidate> neighbour, Direction direction) {
         Collection<MapTileCandidate> rc = new HashSet<>();
         for (MapTileCandidate tileCandidate : neighbour) {
             if (isPossibleNeighbour(meTile, tileCandidate, direction)) {

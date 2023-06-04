@@ -14,9 +14,9 @@ import java.util.HashMap;
 
 @Service
 public class BorderDetector {
-    Logger LOG = LoggerFactory.getLogger(BorderDetector.class);
+    private final Logger LOG = LoggerFactory.getLogger(BorderDetector.class);
 
-    HashMap<String, BorderInfo> cache = new HashMap<>();
+    private final HashMap<String, BorderInfo> cache = new HashMap<>();
 
     public BorderInfo detectBorder(String fileName) throws IOException {
         if (cache.containsKey(fileName)) {

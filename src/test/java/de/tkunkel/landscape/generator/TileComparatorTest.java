@@ -187,22 +187,22 @@ class TileComparatorTest {
         neighbours.add(generateFileCandidate(Color.GREEN, Color.WHITE, Color.WHITE, Color.WHITE, "c.png"));
         neighbours.add(generateFileCandidate(Color.WHITE, Color.BLUE, Color.WHITE, Color.WHITE, "d.png"));
 
-        Collection<MapTileCandidate> possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, allTiles, Direction.NORTH);
+        Collection<MapTileCandidate> possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, Direction.NORTH);
         Assertions.assertNotNull(possibleNeighbours);
         Assertions.assertEquals(1, possibleNeighbours.size());
         Assertions.assertEquals("a.png", ((MapTileCandidate) possibleNeighbours.toArray()[0]).fileName);
 
-        possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, allTiles, Direction.EAST);
+        possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, Direction.EAST);
         Assertions.assertNotNull(possibleNeighbours);
         Assertions.assertEquals(1, possibleNeighbours.size());
         Assertions.assertEquals("b.png", ((MapTileCandidate) possibleNeighbours.toArray()[0]).fileName);
 
-        possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, allTiles, Direction.SOUTH);
+        possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, Direction.SOUTH);
         Assertions.assertNotNull(possibleNeighbours);
         Assertions.assertEquals(1, possibleNeighbours.size());
         Assertions.assertEquals("c.png", ((MapTileCandidate) possibleNeighbours.toArray()[0]).fileName);
 
-        possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, allTiles, Direction.WEST);
+        possibleNeighbours = tileComparator.getPossibleNeighbours(meTile, neighbours, Direction.WEST);
         Assertions.assertNotNull(possibleNeighbours);
         Assertions.assertEquals(1, possibleNeighbours.size());
         Assertions.assertEquals("d.png", ((MapTileCandidate) possibleNeighbours.toArray()[0]).fileName);

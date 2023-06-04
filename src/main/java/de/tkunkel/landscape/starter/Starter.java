@@ -1,9 +1,9 @@
 package de.tkunkel.landscape.starter;
 
 import de.tkunkel.landscape.generator.LandscapeGenerator;
-import de.tkunkel.landscape.types.NoTileCandidatesLeft;
 import de.tkunkel.landscape.map.Map;
 import de.tkunkel.landscape.renderer.MapRenderer;
+import de.tkunkel.landscape.types.NoTileCandidatesLeft;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +14,10 @@ import java.util.Objects;
 
 @SpringBootApplication(scanBasePackages = "de.tkunkel.landscape")
 public class Starter {
-    static Logger LOG = LoggerFactory.getLogger(Starter.class);
+    private final static Logger LOG = LoggerFactory.getLogger(Starter.class);
 
-    private LandscapeGenerator landscapeGenerator;
-    private         MapRenderer mapRenderer;
+    private final LandscapeGenerator landscapeGenerator;
+    private final MapRenderer mapRenderer;
 
 
     public Starter(LandscapeGenerator landscapeGenerator, MapRenderer mapRenderer) {
@@ -38,25 +38,25 @@ public class Starter {
         landscapeGenerator.setConfigParameter("circuit", 20, 20);
         Map map = null;
 
-        boolean problemOccured;
+        boolean problemOccurred;
         int loop = 0;
         LOG.info("Lets start");
         do {
             loop++;
-            problemOccured = false;
+            problemOccurred = false;
             try {
                 map = landscapeGenerator.createEmptyMap();
             } catch (NoTileCandidatesLeft ex) {
-                problemOccured = true;
+                problemOccurred = true;
                 LOG.info("Looping (" + loop + ")");
                 LOG.debug(ex.getMessage());
             }
-            if (!problemOccured) {
+            if (!problemOccurred) {
                 try {
                     landscapeGenerator.collapseAll(map);
                     checkIfBrokenFields(map);
                 } catch (NoTileCandidatesLeft ex) {
-                    problemOccured = true;
+                    problemOccurred = true;
                     LOG.info("Looping (" + loop + ")");
                     LOG.debug(ex.getMessage());
                 }
@@ -64,7 +64,7 @@ public class Starter {
             if (loop > 1_000) {
                 throw new RuntimeException("Too many tries to fill the map!");
             }
-        } while (problemOccured);
+        } while (problemOccurred);
 
         mapRenderer.render(map);
     }

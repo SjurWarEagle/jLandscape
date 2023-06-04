@@ -16,7 +16,7 @@ import java.util.*;
 @Service
 public class LandscapeGenerator {
 
-    private BorderDetector borderDetector;
+    private final BorderDetector borderDetector;
 
     private String tileSet;
     private int width;
@@ -87,6 +87,7 @@ public class LandscapeGenerator {
     }
 
     public boolean isUncollapsedTilesExists(Map map) {
+        //noinspection UnnecessaryLocalVariable
         boolean rest = Arrays.stream(map.grid).flatMap(Arrays::stream).anyMatch((o1) -> o1.candidates.size() > 1);
         return rest;
     }

@@ -17,7 +17,7 @@ import java.net.URL;
 @Service
 public class MapRenderer {
     private final int cellSize = 25;
-    Logger LOG = LoggerFactory.getLogger(MapRenderer.class);
+    private final Logger LOG = LoggerFactory.getLogger(MapRenderer.class);
 
     public void render(Map map) throws IOException {
         int width = map.width * cellSize;
