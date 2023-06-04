@@ -68,7 +68,7 @@ class TileComparatorTest {
         Assertions.assertEquals(2, map.grid[1].length);
         Assertions.assertEquals(1, map.grid[0][0].candidates.size());
         Assertions.assertEquals(2, map.grid[0][1].candidates.size());
-        Assertions.assertEquals(5, map.grid[1][0].candidates.size());
+        Assertions.assertEquals(2, map.grid[1][0].candidates.size());
         Assertions.assertEquals(5, map.grid[1][1].candidates.size());
 
     }

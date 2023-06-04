@@ -35,7 +35,7 @@ public class Starter {
     }
 
     public void generateLandscape() throws Exception {
-        landscapeGenerator.setConfigParameter("circuit", 20, 20);
+        landscapeGenerator.setConfigParameter("circuit", 50, 50);
         Map map = null;
 
         boolean problemOccurred;

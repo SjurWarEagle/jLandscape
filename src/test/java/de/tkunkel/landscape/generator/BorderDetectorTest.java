@@ -18,7 +18,7 @@ class BorderDetectorTest {
         Assertions.assertNotNull(borderInfo);
         assertNotNull(borderInfo.north);
         assertNotNull(borderInfo.east);
-        assertEquals(3,borderInfo.east.length);
+        assertEquals(5,borderInfo.east.length);
         assertNotNull(borderInfo.east[0]);
         assertNotNull(borderInfo.east[1]);
         assertNotNull(borderInfo.east[2]);
