@@ -58,7 +58,6 @@ class TileComparatorTest {
         Assertions.assertEquals(5, map.grid[1][0].candidates.size());
         Assertions.assertEquals(5, map.grid[1][1].candidates.size());
 
-        MapTileCandidate keeper = map.grid[0][0].candidates.stream().toList().get(0);
         map.grid[0][0].candidates.clear();
         map.grid[0][0].candidates.add(loadMapTile("demo/blank.png"));
 
@@ -178,7 +177,6 @@ class TileComparatorTest {
     @Test
     public void getPossibleNeighbours() {
         TileComparator tileComparator = new TileComparator();
-        List<MapTileCandidate> allTiles = new ArrayList<>();
         MapTileCandidate meTile = generateFileCandidate(Color.BLUE, Color.RED, Color.GREEN, Color.BLUE, "a.png");
 
         List<MapTileCandidate> neighbours = new ArrayList<>();
